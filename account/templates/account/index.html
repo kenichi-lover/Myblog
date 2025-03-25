@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}我的信息{% endblock %}
+
+{% block container-fluid %}
+    <main class="r_box">
+        <div class="about">
+            <div>{{ user.introduce }}</div>
+            <br><hr><br>
+            <h2 style="color: white">我的资料</h2>
+            <br>
+            <p style="color: white">名字: {{ user.name }}</p>
+            <br />
+            <p style="color: white">电话: {{ user.telephone }}</p>
+            <br />
+        </div>
+    </main>
+
+{% endblock container-fluid %}

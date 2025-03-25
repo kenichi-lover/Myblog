@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>留言板</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3/css/bootstrap.css' %}">
+    <style>
+        body{
+            background-image: url("{% static 'images/230858.png' %}");
+            background-size: cover ;
+            background-repeat: no-repeat;
+        }
+        h2{
+            margin-top: 20px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="color: white">留言板</h1>
+
+        <form method="post" style="background-color: transparent;">
+            {% csrf_token %}
+            <p>
+                <label for="{{ form.email.id_for_label }}" style="color: white;">留言用户:</label><br>
+                {{ form.name }}
+            </p>
+            <p>
+                <label for="{{ form.email.id_for_label }}" style="color: white;">邮箱地址:</label><br>
+                {{ form.email }}
+            </p>
+            <p>
+                <label for="{{ form.message.id_for_label }}" style="color: white;">留言内容:</label><br>
+                {{ form.content }}
+            </p>
+            <button type="submit" class="btn btn-primary" style="margin-top: 20px">提交留言</button>
+        </form>
+
+
+        <h2 style="color: white">所有留言</h2>
+        <ul class="list-group">
+            {% for item in interflow_list %}
+            <li class="list-group-item" style="background-color: transparent;color: white">
+                <strong>{{ item.name }}</strong> ({{ item.email }}) - {{ item.created }}<br>
+                {{ item.content }}
+
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

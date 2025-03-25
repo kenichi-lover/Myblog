@@ -1,0 +1,36 @@
+<div class="right-text">
+    <h1>Notice  Board</h1>
+    <div class="job-title"><h5 style="padding-left: 200px">--Web developers</h5></div>
+    <p>
+        Far far away, behind the word mountains, far from the countries <span>Infiltration</span> and
+        <span>Hacker</span>, there live the blind texts. Separated they live in Bookmarksgrove
+        right at the coast of the Semantics, a large language ocean.
+    </p>
+
+    <p>
+        A small river named <span>Black-box flows by their place and supplies it with
+        the necessary regelialia.</span> <br>It is a paradisematic country, in which roasted parts of
+        sentences fly into your mouth.
+    </p>
+
+    <h2>Contact information</h2>
+    <ul>
+        <li>Email: <a href="mailto:paulken731@gmail.com">Administrator@gmail.com</a></li>
+        <li>Web: <a href="https://github.com/kenichi-lover">https://github.com</a></li>
+        <li>Tel:
+            <button style="color: white">Press me</button>
+            <div id="greeting"></div>
+        </li>
+    </ul>
+</div>
+<script>
+    const button = document.querySelector("button");
+
+    function greet() {
+        const name = prompt("What is your name?");
+        const greeting = document.querySelector("#greeting");
+        greeting.textContent = `Hello ${name}, nice to see you! my phone number is 13807391908`;
+    }
+
+    button.addEventListener("click", greet);
+</script>

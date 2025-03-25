@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}上传头像和资料{% endblock %}
+{% block container-fluid %}
+<article>
+    <form method="post" enctype="multipart/form-data" action="{% url 'account:upload' %}">
+        {% csrf_token %}
+        <p><label for="{{ album_form.photo.id_for_label }}" style="color: white">头像:</label>{{ album_form.photo }}</p>
+        <button type="submit" class="btn btn-primary">上传</button>
+    </form>
+</article>
+{% endblock %}

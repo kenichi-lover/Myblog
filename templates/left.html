@@ -1,0 +1,41 @@
+
+{% for article in page_obj %}
+<div class="media article-item mb-4">
+
+
+    <div class="media-body">
+        <h4 class="media-heading article-title">
+            <a href="#" style="color: white">{{ article.title }}</a>
+        </h4>
+
+        <div class="article-meta mb-2">
+            <span class="text-muted">
+                <i style="color: white">{{ article.author.username }}</i>
+            </span>
+            <span class="text-muted mx-2">|</span>
+            <span class="text-muted">
+                <i class="fas fa-clock" style="color: white">{{ article.created|date:'Y-m-d H:i' }}</i>
+            </span>
+            {% if article.article_tag.exists %}
+            <span class="text-muted mx-2">|</span>
+            <span class="article-tags">
+                <i class="fas fa-tags"></i>
+                {% for tag in article.article_tag.all %}
+                <span class="badge badge-secondary">{{ tag.tag }}</span>
+                {% endfor %}
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="article-content" style="max-height: 60px; overflow: hidden; color: white">
+            {{ article.content }}
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+<div class="footer">
+    {% include 'footer.html' %}
+</div>
+
+

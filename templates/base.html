@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} </title>
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.3/css/bootstrap.css' %}">
+    <style>
+        body{
+            margin: 0;
+            background-image: url("{% static 'images/1356514.png' %}") ;
+            background-size: cover ;
+            background-repeat: no-repeat;
+        }
+        .header{
+            background-color: #2b3035;
+        }
+        .header .left{
+            float: left;
+            color: white;
+            height: 38px;
+            line-height: 38px;
+        }
+        #starlist {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        #starlist li a{
+            color: white;
+            margin-right: 21px;
+            text-decoration:none;
+        }
+        .header .right{
+            float: right;
+            color: white;
+            height: 38px;
+            line-height: 38px;
+        }
+        .header .right a{
+            color: #b0b0b0;
+            line-height: 40px;
+            display: inline-block;
+            font-size: 12px;
+            margin-right: 21px;
+            text-decoration:none;
+        }
+        .container-fluid .row{
+            margin-top: 20px;
+            color: white;
+        }
+        .list-group{
+            background-color: transparent;
+        }
+        .list-group .list-group-item{
+            background-color: transparent;
+        }
+        .media{
+            margin-bottom: 30px;
+        }
+        .media-body{
+            padding-left: 15px;
+        }
+        .media-left{
+            vertical-align: top;
+        }
+        .media a {
+            text-decoration:none;
+        }
+        .r_box{
+            margin: 0 auto;
+            width: 300px;
+        }
+
+        article {
+            margin-bottom:20px;
+        }
+        .picbox{
+            display: flex;
+            margin-right: 20px;
+        }
+        .photo-card{
+            margin: 50px;
+        }
+        .page_list {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .page_list a{
+            margin-right: 20px;
+        }
+        .right-text{
+            margin-top: 100px;
+            text-decoration: none;
+        }
+        .right-text h1{
+            border-bottom: 1px solid white;
+            font-size: 3rem;
+            text-shadow: 5px 5px 5px darkolivegreen, 2px 2px 1px darkolivegreen;
+        }
+        .right-text span{
+             background-color: darkolivegreen;
+
+        }
+        .right-text a{
+            color: darkolivegreen;
+            text-decoration: none;
+        }
+        .right-text button{
+            background-color: transparent;
+        }
+    </style>
+</head>
+<body>
+{% block header %}{% endblock %}
+{% block container-fluid %}{% endblock container-fluid %}
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'bootstrap-5.3.3/js/bootstrap.js' %}"></script>
+</body>
+</html>

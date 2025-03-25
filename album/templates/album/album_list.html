@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}我的照片{% endblock %}
+
+{% block container-fluid %}
+<article>
+    <a href="{% url 'article:home' %}">返回首页</a>
+    <div class="picbox">
+        {% if pageinfo.object_list %}
+            {% for item in pageinfo.object_list %}
+                <div class="photo-card">
+                    <figure>
+                        {% if item.photo %}
+                            <img src="{{ item.photo.url }}"
+                                 alt="{{ item.title|default:'相册图片' }}"
+                                 class="img-fluid"
+                                 width="400"
+                                 height="300">
+
+                        {% endif %}
+
+
+                    </figure>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: white">您还没有上传任何照片。</p>
+        {% endif %}
+    </div>
+
+
+</article>
+<div class="page_list">
+        {% if pageinfo.has_previous %}
+            <a href="{% url 'album:index_page' user.id pageinfo.previous_page_number %}"
+               class="page-link" style="color: white">上一页</a>
+        {% endif %}
+
+        {% for page in pageinfo.paginator.page_range %}
+            <a href="{% url 'album:index_page' user.id page %}"
+               class="page-link {% if page == pageinfo.number %}active{% endif %}" style="color: white">
+                {{ page }}
+            </a>
+        {% endfor %}
+
+        {% if pageinfo.has_next %}
+            <a href="{% url 'album:index_page' user.id pageinfo.next_page_number %}"
+               class="page-link" style="color: white">下一页</a>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'album:upload_photo' %}" class="btn btn-primary">上传图片</a>
+{% endblock %}
