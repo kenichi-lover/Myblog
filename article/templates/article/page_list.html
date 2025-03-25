@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文章列表</title>
+</head>
+<body>
+    <h1>文章列表 - 完整版</h1>
+
+    {% if page_obj %}
+        <ul>
+            {% for article in page_obj %}
+                <li>{{ article.title }} - {{ article.author }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">« first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last »</a>
+                {% endif %}
+            </span>
+        </div>
+    {% else %}
+        <p>没有文章。</p>
+    {% endif %}
+
+    <p>总页数: {{ num_pages }}</p>
+    <p>文章总数: {{ total_count }}</p>
+</body>
+</html>

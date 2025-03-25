@@ -8,10 +8,11 @@ from django.urls import reverse
 from .forms import ArticleForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
+
 def home_view(request):
     page_number_str = request.GET.get('page')
     article = ArticleInfo.objects.all().order_by('-created')
-    paginator = Paginator(article, 2)
+    paginator = Paginator(article, 3)
     try:
         page_number = int(page_number_str) if page_number_str else 1
         page_obj = paginator.get_page(page_number)
@@ -23,6 +24,7 @@ def home_view(request):
         'page_obj': page_obj,
     }
     return render(request, 'home.html', context)
+
 
 class IndexView(LoginRequiredMixin,View):
 
@@ -56,7 +58,7 @@ def page_list(request,id=None):
     except EmptyPage:
         page_obj = paginator.get_page(paginator.num_pages)
 
-    return render(request, 'home.html', {'page_obj': page_obj})
+    return render(request, 'article/page_list.html', {'page_obj': page_obj})
 
 @login_required()
 def publish_article(request):

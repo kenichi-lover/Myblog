@@ -12,7 +12,7 @@ class InterflowInfoForm(forms.ModelForm):
         for name,field in self.fields.items():
             #if name == 'name':
                 #continue
-            field.widget.attrs = {'class':'form-control','placeholder':field.label,'style':'background-color: transparent'}
+            field.widget.attrs = {'class':'form-control','placeholder':field.label}
 
 
 '''

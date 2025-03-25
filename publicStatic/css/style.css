@@ -1,0 +1,17 @@
+/* 加载页面： 输入框默认是透明背景和白色文字 */
+.form-control {
+    background-color: transparent;  /* 默认透明背景 */
+    color: black;   /* 默认黑色色字体 */
+}
+
+/* 当你点击输入框（获得焦点），背景变为白色，文字变为黑色 */
+.form-control:focus{
+    background-color: white;  /* 焦点时白色背景 */
+    color: black;   /* 焦点时黑色文字，以保证输入文字的可见性 */
+}
+
+/* 只要输入框中有一个字符，背景保持白色，文字保持黑色 */
+.form-control:not(:placeholder-shown){
+    background-color: white;
+    color: black;
+}
