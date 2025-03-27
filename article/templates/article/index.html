@@ -34,7 +34,7 @@
 <div class="editor-container">
     <h2 class="mb-4" style="color: white">撰写新文章</h2>
 
-    <form method="post" enctype="multipart/form-data" action="{% url 'article:publish' %}">
+    <form method="post" enctype="multipart/form-data" action="{% url 'article:index' user.id %}">
         {% csrf_token %}
 
         <!-- 错误提示 -->

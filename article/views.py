@@ -9,8 +9,9 @@ from .forms import ArticleForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-def home_view(request):
-    page_number_str = request.GET.get('page')
+
+def home_view(request):  # 在主页上用分页器
+    page_number_str = request.GET.get('page')  #  用于从 HTTP GET 请求的查询字符串中检索 page 参数的值。没有返回None。
     article = ArticleInfo.objects.all().order_by('-created')
     paginator = Paginator(article, 3)
     try:
@@ -24,23 +25,6 @@ def home_view(request):
         'page_obj': page_obj,
     }
     return render(request, 'home.html', context)
-
-
-class IndexView(LoginRequiredMixin,View):
-
-    def get(self, request ,id=None):
-        if id is None:
-            diaries = ArticleInfo.objects.all()
-        else:
-            diaries = ArticleInfo.objects.filter(author_id=id)
-        article_list = ArticleInfo.objects.all().order_by('-created')[:5]
-
-        context = {
-            'diaries': diaries,
-            'article_list': article_list
-        }
-        return render(request, 'article/index.html', context)
-
 
 def page_list(request,id=None):
     if id :
@@ -61,19 +45,21 @@ def page_list(request,id=None):
     return render(request, 'article/page_list.html', {'page_obj': page_obj})
 
 @login_required()
-def publish_article(request):
-    if request.method == "POST":
-        form = ArticleForm(request.POST,request.FILES)
-        if form.is_valid():
-            article = form.save(commit=False)
+def publish_article(request,id=None):
+    if id is not None:
+        if request.method == "POST":
+            form = ArticleForm(request.POST,request.FILES)
+            if form.is_valid():
+                article = form.save(commit=False)
 
-            article.author_id = request.user.id
-            article.save()
-            form.save_m2m()
-            return redirect('article:home')
-    else:
-        form = ArticleForm()
-    return render(request,'article/index.html', {'form': form})
+                article.author_id = request.user.id
+                article.save()
+                form.save_m2m()  # 专门用于处理多对多（many-to-many，m2m）关系的数据保存。在 form.save() 方法之后调用，以确保模型的主要数据已保存到数据库。
+                                 # 在使用 ModelForm 并且表单包含 m2m 字段时，必须这样做。
+                return redirect('article:home')
+        else:
+            form = ArticleForm()
+        return render(request,'article/index.html', {'form': form})
 
 
 def test_view(request):
