@@ -20,57 +20,49 @@ def home_view(request):
     return render(request, 'home.html')
 class IndexView(LoginRequiredMixin, View):
 
-    def get(self, request, id=None):
-        if id is None:
-            id = request.user.id
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.id
 
-        album = AlbumInfo.objects.filter(user_id=id)
-        tag = ArticleTag.objects.filter(user_id=id)
-        user = MyUser.objects.filter(id=id).first()
+        album = AlbumInfo.objects.filter(user_id=user_id)
+        tag = ArticleTag.objects.filter(user_id=user_id)
+        user = MyUser.objects.filter(id=user_id).first()
         return render(request, 'account/index.html', {'album': album, 'tag': tag, 'user': user})
 
+class RegisterView(View):  # 实现注册功能
+    template_name = 'account/register.html'
+    form_class = RegisterForm
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
 
-def register_view(request):
-    if request.method == "POST":
-        # 使用 RegisterForm 类（自定义的注册表单）创建一个表单实例。request.POST 将 POST 请求中的数据传递给表单，以便进行验证。
-        form = RegisterForm(request.POST)
+    def post(self, request):
+        form = self.form_class(request.POST)
         if form.is_valid():
-            # 表单若有效，调用 form.save() 方法将表单数据保存到数据库中，创建一个新的用户帐户。
             form.save()
-            return JsonResponse({"status": "success"})
-        else:
-            # form.errors.as_data() 将错误信息转换为 Python 字典，以便于打印。
-            print(form.errors.as_data())
-    else:
-        # 如果请求方法不是 "POST"，则创建一个空的 RegisterForm 实例。
-        form = RegisterForm()
-    return render(request, 'account/register.html', {'form': form})
+            return JsonResponse({'status': 'success'})
+        return render(request, self.template_name, {'form': form})
 
-def login_view(request):
-    # 如果是 "POST"，则表示用户提交了登录表单。否则（通常是 "GET"），表示用户首次访问登录页面。
-    if request.method == "POST":
-        # 使用 AuthenticationForm 类（Django 内置的登录表单）创建一个表单实例。data=request.POST 将 POST 请求中的数据传递给表单，以便进行验证。
-        form = AuthenticationForm(data=request.POST)
-        print(form.errors)
-        # 如果表单数据有效，则继续执行。
+
+class LoginView(View):
+    template_name = 'account/login.html'
+    form_class = AuthenticationForm
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
-            # 从验证后的表单数据中获取用户名和密码。
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            # 使用 authenticate() 函数（Django 内置的身份验证函数）验证用户名和密码。如果认证成功，authenticate() 返回一个 User 对象；否则，返回 None。
-            user = authenticate(request, username=username, password=password)
-            # 如果 authenticate() 返回了一个 User 对象，则调用 login() 函数（Django 内置的登录函数）将用户登录。
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('account:home')
+                return redirect('home')
             else:
-                print("认证失败：用户名或密码错误")
-        return render(request, 'account/login.html', {'form': form})
-    else:
-        # 如果请求方法不是 "POST"，则创建一个空的 AuthenticationForm 实例。
-        form = AuthenticationForm()
-    return render(request, 'account/login.html', {'form': form})
+                print('认证失败，用户名或密码错误')
+        return render(request, self.template_name, {'form': form})
+
 
 
 
