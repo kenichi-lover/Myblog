@@ -1,13 +1,15 @@
-from django.contrib.auth import login, authenticate,logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login,logout
+
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
-from django.http import JsonResponse
+
 from django.views import View
-from django.urls import reverse
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+
 from album.models import AlbumInfo
 from article.models import ArticleTag
-from .forms import RegisterForm
+from .forms import RegisterForm,MyAuthenticationForm
 
 from .models import MyUser
 from django.contrib import messages
@@ -28,55 +30,39 @@ class IndexView(LoginRequiredMixin, View):  #  展示登录信息
         user = MyUser.objects.filter(id=user_id).first()
         return render(request, 'account/index.html', {'album': album, 'tag': tag, 'user': user})
 
-class RegisterView(View):  # 实现注册功能
+class RegisterView(CreateView):  # 实现注册功能
     template_name = 'account/register.html'
     form_class = RegisterForm
-    def get(self, request):
-        form = self.form_class()
-        return render(request, self.template_name, {'form': form})
+    success_url = reverse_lazy('account:home')
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return super().form_valid(form)
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(self.get_success_url())
+        return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'status': 'success'})
-        return render(request, self.template_name, {'form': form})
 
 
 class LoginView(View):  # 实现登录功能
     template_name = 'account/login.html'
-    form_class = AuthenticationForm
+    form_class = MyAuthenticationForm
 
     def get(self, request):
-        form = self.form_class()
-        return render(request, self.template_name, {'form': form})
+        if request.user.is_authenticated:
+            return redirect('article:home')
+
+        return render(request,self.template_name,{'form':self.form_class(request)})
+
 
     def post(self, request):
-        form = self.form_class(request.POST)
-        is_valid = form.is_valid()  # 存储结果用于调试
-        print(f"Form is valid: {is_valid}")  # 调试输出
+        form = self.form_class(request,data=request.POST)
 
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request,username=username, password=password)
-            print("User authenticated successfully.")  # 添加调试语句
-            # 使用 reverse 获取 URL
-            home_url = reverse('account:home')
-            print(f"Redirecting to: {home_url}")  # 添加调试语句
-            if user is not None:
-                login(request, user)
-                return redirect('account:home')
-            else:
-                form.add_error(None,'认证失败，用户名或密码错误')
-                print("Authentication failed.")  # 添加调试语句
-        else:
-            print("Form is invalid.")  # 添加调试语句
-            print(form.errors)  # 打印表单错误信息
-        return render(request, self.template_name, {'form': form})
-
-
-
+            login(request, form.get_user())
+            return redirect('article:home')
+        return render(request,self.template_name,{'form':form})
 
 def logout_view(request):
     logout(request)
