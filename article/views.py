@@ -1,48 +1,63 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.views import View
+
 from django.core.paginator import Paginator, EmptyPage
+
+from django.views.generic import ListView
 from .models import ArticleInfo
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.urls import reverse
 from .forms import ArticleForm
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
-def home_view(request):  # 在主页上用分页器
-    page_number_str = request.GET.get('page')  #  用于从 HTTP GET 请求的查询字符串中检索 page 参数的值。没有返回None。
-    article = ArticleInfo.objects.all().order_by('-created')
-    paginator = Paginator(article, 3)
-    try:
-        page_number = int(page_number_str) if page_number_str else 1
-        page_obj = paginator.get_page(page_number)
-    except (ValueError, TypeError):
-        page_obj = paginator.get_page(1)
-    except EmptyPage:
-        page_obj = paginator.get_page(paginator.num_pages)
-    context = {
-        'page_obj': page_obj,
-    }
-    return render(request, 'home.html', context)
+class HomePageView(ListView):
+    model = ArticleInfo
+    template_name = 'home.html'
+    context_object_name = 'page_obj'
+    paginate_by = 3
 
-def page_list(request,id=None):
-    if id :
-        return redirect(f'{reverse("page_list")}?page={id}',
-                        permanent=True)
+    def get_queryset(self): # 重写 get_queryset 方法:
+        return ArticleInfo.objects.all().order_by('-created')
 
-    page_number_str = request.GET.get('page')
-    pages = ArticleInfo.objects.all().order_by('-created')
-    paginator = Paginator(pages, 3)
-    try:
-        page_number = int(page_number_str) if page_number_str else 1
-        page_obj = paginator.get_page(page_number)
-    except (ValueError, TypeError):
-        page_obj = paginator.get_page(1)
-    except EmptyPage:
-        page_obj = paginator.get_page(paginator.num_pages)
+    def get_context_data(self, **kwargs): # 重写 get_context_data 方法.get_context_data 方法用于向模板传递额外的上下文变量.
+        context = super().get_context_data(**kwargs) # 首先调用父类的 get_context_data
 
-    return render(request, 'article/page_list.html', {'page_obj': page_obj})
+        # 获取查询集
+        queryset = self.get_queryset()
+
+        # 创建 Paginator 对象
+        paginator = Paginator(queryset, self.paginate_by)
+
+        # 获取页码
+        page_number_str = self.request.GET.get('page')
+        try:
+            page_number = int(page_number_str) if page_number_str else 1
+            page_obj = paginator.get_page(page_number)
+        except (ValueError, TypeError):
+            page_obj = paginator.get_page(1)
+        except EmptyPage:
+            page_obj = paginator.get_page(paginator.num_pages)
+
+        # 将 page_obj 添加到上下文中
+        context['page_obj'] = page_obj
+
+        return context
+
+class PageListView(ListView):
+    model = ArticleInfo
+    template_name = 'article/page_list.html'
+    context_object_name = 'page_obj'
+    paginate_by = 3
+    ordering = ['-created']  # 按创建时间倒序排序
+
+    def get(self, request, *args, **kwargs):
+        # 处理重定向
+        if 'id' in kwargs and kwargs['id'] is not None:
+            return redirect(f'{reverse("page_list")}?page={kwargs["id"]}', permanent=True)
+
+        return super().get(request, *args, **kwargs)
 
 @login_required()
 def publish_article(request,id=None):
@@ -70,3 +85,30 @@ def test_view(request):
     first_article = articles_to_delete.first()
     first_article.delete()
     return HttpResponse('成功')
+
+'''
+ListView 的优点：
+
+简洁： ListView 封装了许多底层细节，例如数据获取、分页和上下文传递。 这使得你的视图代码更简洁易懂。
+
+自动化： ListView 自动处理许多常见的任务，例如创建 Paginator 对象、处理异常和将数据传递给模板。
+
+可定制： 你仍然可以通过重写 get_queryset、get_context_data 和其他方法来定制 ListView 的行为。
+4.代码高度集中，可读性好
+
+当你需要超越 ListView 的默认行为时，你可以这样做：
+
+重写 get_queryset 方法： 如果你需要自定义查询集，例如添加过滤条件、排序规则或联表查询，可以重写 get_queryset 方法。
+
+重写 get_context_data 方法： 如果你需要向模板传递额外的上下文变量，可以重写 get_context_data 方法。 记住要调用 super().get_context_data(**kwargs)，以确保 ListView 的默认上下文变量也被传递给模板。
+
+使用 render_to_response 方法： 如果你需要完全控制模板渲染过程，可以重写 render_to_response 方法。
+
+记住：
+
+对于简单的数据展示，Listview是一个非常有效的工具。但是，如果你需要控制每一个参数的传递，则需要显示传递。
+
+总而言之，ListView 是一个非常有用的工具，但它并非适用于所有场景。 只要你理解它的工作方式，并根据需要进行定制，就可以充分发挥它的优势。
+
+请不要因为一次不愉快的经历就放弃 ListView。 尝试更好地理解它，并在合适的场景中使用它，你可能会发现它是一个非常有用的工具。
+'''

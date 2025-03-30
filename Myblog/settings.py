@@ -58,11 +58,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Myblog.urls'
-
+import os
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -156,3 +156,7 @@ CACHES = {
 
     }
 }
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_SAVE_EVERY_REQUEST = True  # 仅在开发环境中启用

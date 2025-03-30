@@ -41,17 +41,23 @@
             {% csrf_token %}
             <!-- 用户名同下密码一样 -->
             <div class="form-group">
-                <label for="username" class="form-label" style="color: darkolivegreen">用户名</label>
-                <input type="text" name="username" class="form-control" id="username" placeholder="用户名">
+                <label for="id_username" class="form-label" style="color: darkolivegreen">用户名</label>
+                <input type="text" name="username" class="form-control" id="id_username" placeholder="用户名">
+                {{ form.username.errors}}
             </div>
 
             <!-- 特别注意 Django 的 AuthenticationForm 期望密码字段的 name 属性为 password。 -->
             <!-- 登录表单通常不需要“确认密码”字段。只需要一个密码字段。 -->
             <div class="form-group">
-                <label for="password" class="form-label" style="color: darkolivegreen">密码</label>
-                <input type="password" name="password" class="form-control" id="password" placeholder="密码">
+                <label for="id_password" class="form-label" style="color: darkolivegreen">密码</label>
+                <input type="password" name="password" class="form-control" id="id_password" placeholder="密码">
+                {{ form.password.errors }}
             </div>
-
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
 
             <input type="submit" value="登录" class="btn btn-primary btn-sm">
