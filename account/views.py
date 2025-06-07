@@ -78,3 +78,8 @@ def test_view(request):
 
     print(user)
     return HttpResponse('成功')
+'''
+LoginRequiredMixin: 这是 Django 提供的一个非常常用的 Mixin（混入类）。它的作用就是：
+如果用户没有登录，它会自动将用户重定向到 settings.LOGIN_URL 指定的登录页面。
+如果用户已经登录，它才会允许 get 或 post 等方法继续执行，从而渲染视图内容。
+'''
