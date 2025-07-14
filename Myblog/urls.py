@@ -20,11 +20,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('article/', include('article.urls'),name='article'),
-    path('account/', include('account.urls'),name='account'),
-    path('album/', include('album.urls'),name='album'),
-    path('interflow/', include('interflow.urls'),name='interflow'),
-    path('mycache/',include('mycache.urls')),
+    path('article/', include('article.urls', namespace='article')),
+    path('account/', include('account.urls', namespace='account')),
+    path('album/', include('album.urls', namespace='album')),
+    path('interflow/', include('interflow.urls', namespace='interflow')),
+    path('mycache/',include('mycache.urls', namespace='mycache')),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
